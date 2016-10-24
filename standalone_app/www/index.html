@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2016 Szabolcs Kovacs. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+<!-- JQuery, JQuery.Mobile Libraries and application JavaScript -->
+		<script charset="utf-8" type="text/javascript" src="js/jqm/jquery-1.11.js"></script>
+	<!--	<script charset="utf-8" type="text/javascript" src="js/stockScript.js"></script> 
+	<!--	<script charset="utf-8" type="text/javascript" src="js/specReqScript.js"></script>
+<!--	<script charset="utf-8" type="text/javascript" src="js/pg3Order.js"></script> -->
+	<!--	<script charset="utf-8" type="text/javascript" src="js/orderScript.js"></script> 
+		<script charset="utf-8" type="text/javascript" src="js/app.js"></script>
+<!-- Script initialises default settings of JQM before its library is loaded -->
+
+		<script charset="utf-8" type="text/javascript" src="js/jqm/jquery.mobile-1.4.5.min.js"></script>
+<!-- JQuery.Mobile, phonegap default and application style sheets -->
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+		<link rel="stylesheet" type="text/css" href="css/jqmOverWriteStyle.css" />
+
+        <link rel="stylesheet" type="text/css" href="js/jqm/jquery.mobile-1.4.5.min.css"  />
+		<link rel="stylesheet" type="text/css" href="css/appStyle.css" />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <title>Erzsébet Terem</title>
+</head>
+
+<body>
+<!-- 
+	The first page of the app, the middle section contains a company logo, 
+	underneath the flashing login button. 
+	The hidden login form is triggered by user clicks. 
+	The form contains two fields and a submit button 
+	in order to validate user’s inputs for the basic authentication process. (disabled)  
+-->
+	<div data-role="page" id="welcome">
+		<div data-role="header" data-position="fixed" 
+				data-tap-toggle="false" class="headerStyle" style="background-colour:#f4ed8a">
+			<div data-role="dialog" id="networkStatus">
+			</div>
+		</div>
+		<div role="main" class="ui-content app"> <!-- main content -->
+			<div id="deviceready" class="blink">
+				<p class="event listening"></p>
+				<div class="pg1SignBtn event listening">
+					<a href="#popupLogin" data-rel="popup" data-role="none" data-position-to="window" class="ui-btn ui-shadow ui-btn-inline event received" data-transition="slidedown" id="pg1Signbtn">Belépés</a>
+				</div>		
+					<div data-role="popup" id="popupLogin" data-theme="a" class="ui-corner-all">
+						<form>
+							<div style="padding:10px 20px;">
+								<h3>Kérem Lépjen Be</h3>
+								<label for="pg1Username" class="ui-hidden-accessible"></label>
+								<input name="username" id="pg1Username" value="" placeholder="admin" type="text">
+								<label for="pg1Password" class="ui-hidden-accessible"></label>
+								<input name="pass" id="pg1Password" value="" placeholder="jelszó" type="password">
+								<button data-role="none" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check ui-btn ui-corner-all" id="pg1LoginBtn">Belépés</button>
+							</div>
+						</form>
+					</div>
+			</div>	
+		</div> <!-- end of main content -->
+		<div data-role="footer" data-position="fixed" class="footerStyle">
+			<h3>Designed by Szabolcs Kovacs <br> skovacs33@gmail.com</h3>		
+		</div> <!-- end footer -->
+    </div> 
+<!-- ###############################################  End/First Page/Login  ################################################################################################## -->
+<!-- 
+	The second page of the app. 
+	The header section contains an add button with 100% width and a click listener function. 
+	This function responsible for detecting user's selection which triggers a popup form.
+	Which is displayed on the foreground. 
+	The form can be filled out and then either submit or cancel the newly given profile. 
+	The form also includes basic data validation, 
+	using regular expression, prepared statements, and mismatch type exceptions 
+	along with error messages. 
+	Once the submit button is pressed, the details of the form are passed to the AJAX function. 
+	The JQ AJAX function forwards the gathered data object to the remote server (API), using HTTP request. 
+	At the bottom of the page, there is an input field with search filtering option. 
+	This is based on a real-time asynchronous function which is enabled by the key-up listener. 
+	Once the user inputs any value, the function requests a list of possibilities from the database.    
+-->	
+	<div data-role="page" id="membersList">	
+	<!-- Menu Panel with overlay feature -->
+    <div data-role="panel" data-position-fixed="true" data-display="push" data-theme="b" id="nav-panel">
+        <ul data-role="listview">
+            <li data-icon="delete">
+				<a href="#" data-rel="close">Menü Bezárása</a></li>
+                <li><a id="menuRefresh">Frissítés</a></li>
+                <li><a id="menuSettings">Beállitások</a></li>
+                <li><a id="menuHelp">Súgó</a></li>
+                <li><a id="menuLogout">Kilépés</a></li>
+        </ul>
+    </div><!-- /panel -->
+		<div data-role="header" data-position="fixed" style="overflow:hidden;">
+			<div data-role="navbar">
+				<ul>
+					<li>
+						<a href="#nav-panel" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-bars ui-btn-icon-bottom ui-btn-a"></a>
+					</li>
+					<li>
+						<button data-rel="popup" data-position-to="window"
+							id="popupAddNewMemberForm"
+							class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-icon-plus ui-btn-icon-bottom ui-btn-a" 
+							data-transition="pop"></button>
+					</li>
+				</ul>
+			</div><!-- /navbar -->
+		</div><!-- /header -->		
+		<div role="main" class="ui-content">	
+			<div data-role="popup" id="popUpAddNewMember" data-theme="a" class="ui-corner-all">
+				<form id="saveNewProfile" method="POST">
+					<div style="padding:10px 20px;">
+						<h3>új tag hozzáadása</h3>
+						<span class="name_error error"></span>
+						<input name="newMemeber" id="createName" value="" placeholder="név" data-theme="a" type="text" class="name_error">
+						<span class="key_error error"></span>
+						<input name="newKey" id="createKey" value="" placeholder="biléta szám" data-theme="a" type="number">
+						<span class="date_error error"></span>
+						<input type="date" id="createDate" data-date-format="yy-mm-dd" placeholder="dátum" value="dátum" />						
+						<textarea cols="40" rows="8" name="newComment" id="createComment" data-theme="a" placeholder="megjegyzés..."></textarea>	
+						<fieldset class="ui-grid-a">
+							<div class="ui-block-a" style="float:left"><button data-role="none" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b ui-icon-back ui-btn-icon-left" id="closeNewMemberForm">Bezaras</button></div>
+							<div class="ui-block-b" style="float:right"><button data-role="none" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b ui-icon-check ui-btn-icon-left" data-transition="flow" id="saveNewMemberForm">Mentés</button></div>
+						</fieldset>
+					</div>
+				</form>
+			</div>
+			<!-- AJAX injects the content into this div area -->
+			<div id="injectedContent" class="elements" data-filter="true" data-input="#filterData">
+				<!-- Dynamically  built collapsible list is fetched from remote database -->
+			</div>
+		</div> 
+		<div data-role="footer" data-position="fixed" class="footerStyle">	
+				<form id="searchFilterForm">
+					<input data-type="search" id="filterData" placeholder="Keresés...">
+				</form>			
+		</div> <!-- end footer -->
+	</div> 
+	<!-- ###############################################  /Third Page/Delete Member  ################################################################################################## -->
+	<div data-role="page" id="removeMember">	
+		<div data-role="header" data-position="fixed" style="overflow:hidden;">
+			<h1>Tag Törlés</h1>
+		</div><!-- /header -->		
+		<div role="main" class="ui-content">	
+			<!-- AJAX injects the content into this div area -->
+			<div id="injectedContentDelete">
+				<!-- Dynamically  built form is fetched from remote database -->
+			</div>	
+		</div> 
+		<div data-role="footer" data-position="fixed" class="footerStyle">			
+		</div> <!-- end footer -->
+	</div>
+<!-- ###############################################  /Forth Page/Renew Membership  ################################################################################################## -->	
+	<div data-role="page" id="renewMembership">	
+		<div data-role="header" data-position="fixed" style="overflow:hidden;">
+			<h1>Bérlet Megújítás</h1>
+		</div><!-- /header -->		
+		<div role="main" class="ui-content">	
+			<!-- AJAX injects the content into this div area -->
+			<div id="injectedRenewMembership">
+
+			</div>	
+		</div> 
+		<div data-role="footer" data-position="fixed" class="footerStyle">			
+		</div> <!-- end footer -->
+	</div>
+	
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/attribute.js"></script>
+	<script type="text/javascript" src="js/helperScript.js"></script>
+	<script type="text/javascript" src="js/ajaxScript.js"></script>
+    <script type="text/javascript" src="js/welcomePageScript.js"></script>
+	<script type="text/javascript" src="js/membersListScript.js"></script>
+	<script type="text/javascript" src="js/removeMemberScript.js"></script>
+	<script type="text/javascript" src="js/renewMemberScript.js"></script>
+
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+    </script>
+</body>
+
+</html>
