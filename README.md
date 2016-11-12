@@ -18,3 +18,5 @@ The communication with the remote database, you need to configure the following 
 	- I added a API key for fun so I would like to highlight that the lengthy string is not secure at all in a real-word scenario!
 	
 Finally, the splash screen plugin was removed because the git didn't accept long path, if you would like to enjoy the feature you may need to re-add the plugin. -> phonegap add plugin "plugin name" (something like this) . It may be you need to add images/icons to the source folder in order to visualize the effect.
+
+The live website is available at the following www.erzsebetterem.hu. The single page webapp was designed and implemented using Materialize CSS framework.  
